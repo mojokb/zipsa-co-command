@@ -1,31 +1,43 @@
 # zipsa-co-work
 
-4 collaboration commands for Claude Code that use the [Codex MCP server](https://github.com/openai/codex) to generate parallel plans, validate plans, brainstorm ideas, and review code.
+6 collaboration commands for Claude Code that use the [Codex MCP server](https://github.com/openai/codex) as a second opinion — covering the full workflow from brainstorming through implementation.
 
 ## Commands
 
 | Command | Description | When to Use |
 |---------|-------------|-------------|
-| `/zipsa-brainstorm` | Bounce ideas off Codex | Want fast alternative ideas, critiques, and perspectives |
+| `/zipsa-think` | Bounce ideas off Codex | Want fast alternative ideas, critiques, and perspectives |
 | `/zipsa-plan` | Generate a parallel plan via Codex | Want a second opinion on your planning approach |
 | `/zipsa-validate` | Get a staff engineer review of your plan | Want critical feedback before finalizing a plan |
-| `/zipsa-review` | Senior engineer code review via Codex | Want a multi-axis review before merging |
+| `/zipsa-tasks` | Break a validated plan into implementation tasks | Want a concrete, ordered task list with acceptance criteria |
+| `/zipsa-build` | Implement tasks with Codex as approach reviewer | Want to implement incrementally with a second opinion on each approach |
+| `/zipsa-review` | Dual-perspective code review via Codex | Want a multi-axis review before merging |
 
 ## Installation
 
 See [docs/installation.md](docs/installation.md) for the full installation guide.
 
+## Workflow
+
+The commands form a natural pipeline:
+
+```
+/zipsa-think → /zipsa-plan → /zipsa-validate → /zipsa-tasks → /zipsa-build → /zipsa-review
+```
+
+Use as many or as few steps as needed — each command is independent.
+
 ## Command Details
 
-### `/zipsa-brainstorm`
+### `/zipsa-think`
 
 Starts an interactive brainstorming session with Codex. Pass your topic or question as the argument.
 
 ```
-/zipsa-brainstorm how should we structure the authentication system
+/zipsa-think how should we structure the authentication system
 ```
 
-Supports follow-up conversation to dig deeper into ideas.
+Agent and Codex brainstorm independently, then compare ideas. Supports follow-up conversation to dig deeper.
 
 ### `/zipsa-plan`
 
@@ -45,11 +57,31 @@ Sends your plan to Codex for a staff-engineer-style review. Pass the path to you
 /zipsa-validate .claude/plans/my-plan.md
 ```
 
-Returns critical issues, simplification opportunities, and alternative approaches. Supports back-and-forth discussion.
+Agent and Codex each independently review the plan, then findings are compared. Returns critical issues, simplification opportunities, and alternative approaches. Supports back-and-forth discussion.
+
+### `/zipsa-tasks`
+
+Breaks a validated plan into concrete, ordered implementation tasks. Pass the path to your plan file.
+
+```
+/zipsa-tasks .claude/plans/my-plan.md
+```
+
+Agent and Codex collaborate to surface and resolve every ambiguity in the plan (only escalating unresolvable decisions to the user), then independently produce task breakdowns and merge them into a final ordered list. Each task includes what to build, acceptance criteria, and dependencies.
+
+### `/zipsa-build`
+
+Implements tasks from a task list one by one, with Codex reviewing the approach before each implementation. Pass the path to the tasks file (e.g. from `/zipsa-tasks`).
+
+```
+/zipsa-build .claude/plans/my-tasks.md
+```
+
+For each task, Agent and Codex independently design the implementation approach, compare, resolve any disagreements, then Agent implements and verifies the acceptance criteria before moving to the next task.
 
 ### `/zipsa-review`
 
-Reviews code from a senior engineer's perspective. Pass a file path, directory, or leave empty to review the current git diff.
+Dual-perspective code review. Pass a file path, directory, or leave empty to review the current git diff.
 
 ```
 /zipsa-review src/api/users.py
@@ -57,14 +89,19 @@ Reviews code from a senior engineer's perspective. Pass a file path, directory, 
 /zipsa-review                   # reviews current git diff
 ```
 
-Evaluates code across four axes:
+**Agent role:** Junior Backend Engineer — flags anything confusing, hard to follow, or that would slow down a new contributor.
+
+**Codex role:** Senior Engineer — reviews from an architectural, correctness, and production-readiness perspective.
+
+Evaluates code across five axes:
 
 | Axis | What it checks |
 |------|----------------|
 | SOLID Principles | SRP, OCP, LSP, ISP, DIP violations |
 | Clean Code | Naming, function length, duplication, magic values, dead code |
 | Lint / Style | Language idioms, error handling, type annotations, import hygiene |
-| Optimization | Algorithmic complexity, allocations, IO batching, resource leaks |
+| Google Style Docstrings | Completeness and accuracy of Args, Returns, Raises sections |
+| Optimization & Correctness | Algorithmic complexity, allocations, IO batching, resource leaks, correctness bugs |
 
 When REST API code is detected (route decorators, handler signatures, OpenAPI annotations), three additional axes are automatically included:
 
@@ -88,4 +125,3 @@ Each finding is labeled 🔴 Critical / 🟠 Major / 🟡 Minor / 🟢 Suggestio
 ## License
 
 MIT
-# zipsa-co-command
