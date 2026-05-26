@@ -1,9 +1,13 @@
 ---
 name: zipsa-validate
-description: Get a staff engineer review of your plan via Codex. Use when you want critical review feedback on a plan before finalizing it. Pass the path to the plan file as the argument.
+description: Get a staff engineer review of your plan via Codex. Use when you want critical review feedback on a plan before finalizing it. Pass the path to the plan file as the argument. Results are documented only — does not proceed to implementation.
 ---
 
 # Co-Validate: Get a Staff Engineer Review of Your Plan
+
+## Scope
+
+**This skill produces documentation only.** Do NOT write, edit, or modify any source code files. All output must be saved as a Markdown (`.md`) file.
 
 ## Arguments
 
@@ -77,6 +81,10 @@ Use `mcp__validate-plans-and-brainstorm-ideas__codex-reply` with:
 - `prompt`: your response addressing points, explaining overrides, and asking for clarification when needed
 
 If you override points, explain why so they can push back if needed.
+
+## Output
+
+After completing the review, save the updated plan as a Markdown file. If the plan file was passed as an argument, overwrite it with the revised version. Otherwise save the result with a descriptive filename (e.g., `plan-[slug]-reviewed.md`). The file should reflect all accepted changes, with overridden suggestions documented inline with reasoning.
 
 ## How To Treat Responses
 

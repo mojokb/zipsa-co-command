@@ -5,6 +5,10 @@ description: Generate a parallel plan via Codex. Use when you want an additional
 
 # Co-Plan: Generate a Parallel Plan via Codex
 
+## Scope
+
+**This skill produces documentation only.** Do NOT write, edit, or modify any source code files. All output must be saved as a Markdown (`.md`) file.
+
 ## Step 1: Spawn a Background Subagent for Codex
 
 You MUST immediately spawn a **background subagent** (using the Task tool with `run_in_background: true`) to handle all communication with Codex. The subagent should:
@@ -47,6 +51,10 @@ If you want to discuss the plan further, use `mcp__validate-plans-and-brainstorm
 
 - `threadId`: the thread ID from the previous response
 - `prompt`: your follow-up question or counterpoint
+
+## Output
+
+Save the final plan as a Markdown file in the current working directory. Use a descriptive filename based on the task (e.g., `plan-[task-slug].md`). The file should include the integrated plan with key decisions, architecture choices, and trade-offs documented.
 
 ## How To Treat Responses
 

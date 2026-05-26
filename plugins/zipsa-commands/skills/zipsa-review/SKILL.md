@@ -1,9 +1,13 @@
 ---
 name: zipsa-review
-description: Dual-perspective code review — Agent as Junior BE developer, Codex as Senior developer. Reviews code against SOLID, Clean Code, linting, readability, 80-line function limit, Google style docstring compliance. If REST API code is detected, also reviews RESTful compliance, OpenAPI spec, and agent-readability. Pass a file path, directory, or leave empty to review current git diff.
+description: Dual-perspective code review — Agent as Junior BE developer, Codex as Senior developer. Reviews code against SOLID, Clean Code, linting, readability, 80-line function limit, Google style docstring compliance. If REST API code is detected, also reviews RESTful compliance, OpenAPI spec, and agent-readability. Pass a file path, directory, or leave empty to review current git diff. Results are documented only — does not write or modify any code.
 ---
 
 # Zipsa-Review: Dual-Perspective Code Review
+
+## Scope
+
+**This skill produces documentation only.** Do NOT write, edit, or modify any source code files. All output must be saved as a Markdown (`.md`) file.
 
 **Agent role:** Junior Backend Engineer — reads the code as someone who must understand, maintain, and extend it. Flags anything confusing, hard to follow, or that would slow down a new contributor.
 
@@ -167,6 +171,8 @@ Then merge both reviews:
 - **Conflicting assessments** → state both and give your ruling
 
 ## Output Format
+
+Save the final review as a Markdown file in the current working directory. Use a descriptive filename (e.g., `review-[file-or-feature-slug].md`).
 
 ```
 ## Code Review

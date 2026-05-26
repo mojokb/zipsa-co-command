@@ -6,14 +6,14 @@
     "name": "mojokb"
   },
   "metadata": {
-    "version": "0.0.3"
+    "version": "0.0.4"
   },
   "plugins": [
     {
       "name": "zipsa-commands",
       "source": "./plugins/zipsa-commands",
       "description": "Commands for /zipsa-think, /zipsa-plan, /zipsa-validate, /zipsa-tasks, /zipsa-build, and /zipsa-review via Codex MCP",
-      "version": "0.0.3",
+      "version": "0.0.4",
       "category": "development"
     }
   ]

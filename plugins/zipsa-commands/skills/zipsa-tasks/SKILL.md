@@ -5,6 +5,10 @@ description: Break a validated plan into concrete implementation tasks. Spawns C
 
 # Zipsa-Tasks: Break Plan Into Implementation Tasks
 
+## Scope
+
+**This skill produces documentation only.** Do NOT write, edit, or modify any source code files. All output must be saved as a Markdown (`.md`) file.
+
 ## Arguments
 
 `$ARGUMENTS` should be the path to the plan file. If not provided, check if there is a plan file from the current session (for example in `.claude/projects/` or the working directory).
@@ -145,6 +149,8 @@ Once both breakdowns are complete, compare them:
 Produce the final merged task list.
 
 ## Output Format
+
+Save the final task list as a Markdown file in the current working directory. Use a descriptive filename based on the plan (e.g., `tasks-[plan-slug].md`).
 
 ```
 ## Implementation Tasks
