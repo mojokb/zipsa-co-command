@@ -5,9 +5,19 @@ description: Bounce ideas off Codex. Use when you want fast alternative ideas, c
 
 # Co-Brainstorm: Bounce Ideas Off Codex
 
-## Scope
+## Human-facing reports and HTML
 
-**This skill produces documentation only.** Do NOT write, edit, or modify any source code files. All output must be saved as a Markdown (`.md`) file.
+Follow the [shared reporting rules](../zipsa-workflow/references/reporting.md) for issue comments and HTML wording.
+
+Follow the [shared HTML guide contract](../zipsa-workflow/references/html-guide.md) on entry, after each meaningful internal step, and before yielding or completing, including standalone invocation. Update the feature's integrated HTML with plain explanations, observed results, uncertainty, original evidence and next actions; preserve other steps and return its path. This presentation does not replace canonical artifacts or grant execution/approval authority.
+
+## Work type and prerequisites
+
+Read the [shared work policy](../zipsa-workflow/references/work-policy.md), including its question classification. For fix alternatives, use current reproduction/cause evidence; return a missing diagnostic prerequisite to grill rather than choosing a speculative remedy. This stage still explores ideas only.
+
+## Independent simplicity check
+
+Include the [shared overengineering check](../zipsa-workflow/references/independent-review.md) in every independent peer prompt, including follow-ups, and apply its findings in the existing stage comparison.
 
 ## Step 1: Spawn a Background Subagent for Codex
 
@@ -58,10 +68,6 @@ If you want to dig deeper, use `mcp__validate-plans-and-brainstorm-ideas__codex-
 
 - `threadId`: the thread ID from the previous response
 - `prompt`: your follow-up to challenge assumptions, explore alternatives, and test edge cases
-
-## Output
-
-Save the final brainstorming summary as a Markdown file in the current working directory. Use a descriptive filename based on the topic (e.g., `brainstorm-[topic-slug].md`). The file should include your integrated ideas, key trade-offs, and any follow-up questions.
 
 ## How To Treat Responses
 

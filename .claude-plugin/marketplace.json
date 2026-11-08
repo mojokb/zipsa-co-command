@@ -1,19 +1,19 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "zipsa-co-work",
-  "description": "Co-* collaboration commands for Claude Code — brainstorm, plan, validate, task breakdown, build, and review via Codex MCP",
+  "description": "Fix and feature workflows for Claude Code, with a separate Codex skill distribution.",
   "owner": {
     "name": "mojokb"
   },
   "metadata": {
-    "version": "0.0.4"
+    "version": "0.0.5"
   },
   "plugins": [
     {
       "name": "zipsa-commands",
       "source": "./plugins/zipsa-commands",
-      "description": "Commands for /zipsa-think, /zipsa-plan, /zipsa-validate, /zipsa-tasks, /zipsa-build, and /zipsa-review via Codex MCP",
-      "version": "0.0.4",
+      "description": "Nine zipsa skills for requirements, diagnosis, planning, implementation, testing and review.",
+      "version": "0.0.5",
       "category": "development"
     }
   ]

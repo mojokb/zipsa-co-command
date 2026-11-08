@@ -1,51 +1,55 @@
-# CLAUDE.md
+# Repository guidance
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## Purpose and layout
 
-## What This Is
+This repository distributes nine zipsa skills for both Claude Code and Codex.
 
-A Claude Code plugin (`zipsa-co-work`) providing four collaboration skills that use OpenAI's Codex MCP server as a second opinion. No compiled code, no build steps, no tests — purely Markdown skill definitions and JSON config.
+- Claude skills: `plugins/zipsa-commands/skills/`.
+- Claude manifest: `plugins/zipsa-commands/.claude-plugin/plugin.json`.
+- Marketplace: `.claude-plugin/marketplace.json`.
+- Codex skills: `codex/skills/`.
+- Shared policy, HTML renderer and renderer tests live inside each host's `zipsa-workflow/`.
 
-## Architecture
+The Claude plugin uses the default `skills/` discovery directory. There is no glob-based
+manifest override. Keep host-neutral reference files and renderer resources aligned across
+both distributions. Keep host-specific lead/peer roles, tool calls and failure behavior distinct.
+Do not copy Claude peer instructions over the Codex distribution or vice versa.
 
-```
-.claude-plugin/marketplace.json   ← marketplace registration (name, version, plugin refs)
-plugins/zipsa-commands/
-  plugin.json                     ← plugin definition (auto-discovers skills via glob)
-  skills/
-    zipsa-think/SKILL.md             ← interactive brainstorming
-    zipsa-plan/SKILL.md              ← parallel plan generation
-    zipsa-validate/SKILL.md          ← staff engineer plan review
-    zipsa-tasks/SKILL.md             ← task breakdown with clarifying questions
-    zipsa-review/SKILL.md            ← senior engineer code review
-```
+## Workflow contracts
 
-**Skill discovery:** `plugin.json` uses `"skills": ["./skills/*"]` — any subdirectory with a `SKILL.md` is auto-registered.
-
-**SKILL.md format:** YAML frontmatter (`name`, `description`) followed by Markdown instructions that Claude Code follows when the skill is invoked.
-
-## Core Design Pattern: Prevent Bias
-
-All four skills follow the same anti-bias pattern:
-
-1. Launch Codex in background via `mcp__validate-plans-and-brainstorm-ideas__codex` — prompt tells Codex to work but only reply `"I'm ready"`
-2. Agent does its own independent work (brainstorming/planning/reviewing)
-3. Only after finishing its own work, agent calls `codex-reply` to retrieve Codex's output
-4. Compare both independent results
-
-This prevents the agent from being influenced by Codex's response before forming its own perspective.
-
-## MCP Integration
-
-All skills use two MCP tools from the `validate-plans-and-brainstorm-ideas` server (wraps `@openai/codex mcp-server`):
-
-- `mcp__validate-plans-and-brainstorm-ideas__codex` — start a new session (`sandbox: read-only`, `approval-policy: never`)
-- `mcp__validate-plans-and-brainstorm-ideas__codex-reply` — continue via `threadId`
+The lead agent implements; the independent peer is read-only. Each invocation coordinates
+at most one stage. Preserve repository approval boundaries, fix diagnosis before product
+edits, requirement traceability, evidence freshness and safe interruption recovery.
+The HTML guide does not grant approval or replace canonical artifacts.
 
 ## Versioning
 
-**Always bump the version when making changes.** Version must be updated in three places and kept in sync:
+Bump and synchronize these three fields for a release:
 
-1. `.claude-plugin/marketplace.json` → `metadata.version`
-2. `.claude-plugin/marketplace.json` → `plugins[0].version`
-3. `plugins/zipsa-commands/plugin.json` → `version`
+1. `.claude-plugin/marketplace.json`: `metadata.version`.
+2. `.claude-plugin/marketplace.json`: `plugins[0].version`.
+3. `plugins/zipsa-commands/.claude-plugin/plugin.json`: `version`.
+
+Keep `pyproject.toml`'s tooling project version consistent as well.
+The former `plugins/zipsa-commands/plugin.json` has moved to the standard manifest location.
+Maintain the existing marketplace/plugin names for installed users.
+
+## Validation
+
+Use asdf runtimes from `.tool-versions` and uv; do not add global runtimes or use pip.
+The renderer and tests use the Python standard library and require Python 3.11 or later.
+
+```sh
+uv sync --locked --python "$(asdf which python3)"
+uv run python -m unittest discover -s tests -v
+uv run python -m unittest discover -s plugins/zipsa-commands/skills/zipsa-workflow/tests -v
+uv run python -m unittest discover -s codex/skills/zipsa-workflow/tests -v
+claude plugin validate --strict plugins/zipsa-commands
+claude plugin validate --strict .claude-plugin/marketplace.json
+```
+
+For behavioral instruction changes, use the distribution's
+`zipsa-workflow/references/skill-validation.md` in an isolated workspace. Do not treat
+static checks, test counts or peer agreement as proof of model behavior. Keep unexecuted
+native model checks explicit, including account/tool failures. Never run production checks
+or post externally merely because a skill was updated.

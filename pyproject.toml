@@ -1,0 +1,9 @@
+[project]
+name = "zipsa-co-command"
+version = "0.0.5"
+description = "Claude and Codex collaboration skills and offline guide tools"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.uv]
+package = false

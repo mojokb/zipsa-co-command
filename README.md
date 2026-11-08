@@ -1,127 +1,94 @@
-# zipsa-co-work
+# zipsa-co-command
 
-6 collaboration commands for Claude Code that use the [Codex MCP server](https://github.com/openai/codex) as a second opinion — covering the full workflow from brainstorming through implementation.
+Nine skills for fix and feature work, with independent planning and review from a second agent.
+Claude Code leads the Claude distribution and consults Codex through MCP. Codex leads the
+Codex distribution and consults a read-only Claude CLI session. The lead agent implements;
+its peer reviews the approach. Peer agreement does not grant approval or prove correctness.
 
-## Commands
+## Skills
 
-| Command | Description | When to Use |
-|---------|-------------|-------------|
-| `/zipsa-think` | Bounce ideas off Codex | Want fast alternative ideas, critiques, and perspectives |
-| `/zipsa-plan` | Generate a parallel plan via Codex | Want a second opinion on your planning approach |
-| `/zipsa-validate` | Get a staff engineer review of your plan | Want critical feedback before finalizing a plan |
-| `/zipsa-tasks` | Break a validated plan into implementation tasks | Want a concrete, ordered task list with acceptance criteria |
-| `/zipsa-build` | Implement tasks with Codex as approach reviewer | Want to implement incrementally with a second opinion on each approach |
-| `/zipsa-review` | Dual-perspective code review via Codex | Want a multi-axis review before merging |
+| Skill | Purpose |
+|---|---|
+| `zipsa-workflow` | Coordinate one stage per invocation, track evidence and resume interrupted work. |
+| `zipsa-grill` | Clarify requirements; gather authorized reproduction and cause evidence for fixes. |
+| `zipsa-think` | Compare meaningful alternatives when a choice remains. |
+| `zipsa-plan` | Map requirements to a minimal implementation plan and acceptance checks. |
+| `zipsa-validate` | Review the plan against requirements and concrete risks. |
+| `zipsa-tasks` | Produce ordered tasks with contract-derived test scenarios. |
+| `zipsa-build` | Implement authorized tasks and verify runnable task-level criteria. |
+| `zipsa-test` | Execute required checks on the actual change and preserve failures and limitations. |
+| `zipsa-review` | Review requirements coverage, code quality and current verification evidence. |
 
-## Installation
+## Fix and feature routing
 
-See [docs/installation.md](docs/installation.md) for the full installation guide.
+Classification follows the existing behavior contract, not an issue label. A fix restores
+required behavior; a feature adds or intentionally changes behavior. Mixed work keeps
+requirement-specific classifications. Existing valid evidence can satisfy a gate.
 
-## Workflow
-
-The commands form a natural pipeline:
-
-```
-/zipsa-think → /zipsa-plan → /zipsa-validate → /zipsa-tasks → /zipsa-build → /zipsa-review
-```
-
-Use as many or as few steps as needed — each command is independent.
-
-## Command Details
-
-### `/zipsa-think`
-
-Starts an interactive brainstorming session with Codex. Pass your topic or question as the argument.
-
-```
-/zipsa-think how should we structure the authentication system
-```
-
-Agent and Codex brainstorm independently, then compare ideas. Supports follow-up conversation to dig deeper.
-
-### `/zipsa-plan`
-
-Generates an alternative plan in the background while you continue your own planning. Pass your task description as the argument.
-
-```
-/zipsa-plan add user authentication with OAuth2 support
+```mermaid
+flowchart TD
+    A[Request and existing contract] --> B{Work type}
+    B -->|Fix| C[Grill: reproduce and establish cause]
+    B -->|Feature| D[Grill: confirm scope and acceptance criteria]
+    C --> E[Think when alternatives remain]
+    D --> E
+    E --> F[Plan and validate]
+    F --> G[Tasks]
+    G --> H[Authorized build]
+    H --> I[Test]
+    I --> J[Review]
 ```
 
-Compare the Codex plan against yours to catch missed approaches, simpler alternatives, or overlooked edge cases.
+The controller runs at most one stage per invocation. A status request does not start work.
+Repository approval rules remain in force. A substantive design departure returns to
+planning and validation before implementation, including standalone build use. Two failed
+fixes sharing a premise require testing that premise before another fix. Performance
+measurement rules apply only to performance work.
 
-### `/zipsa-validate`
+## Install and use
 
-Sends your plan to Codex for a staff-engineer-style review. Pass the path to your plan file.
+See [installation](docs/installation.md) for Claude marketplace installation, direct copies,
+Codex installation, dependencies, updates and verification.
 
+- Claude plugin: `/zipsa-commands:zipsa-workflow <request or workflow.md>`.
+- Direct Claude skills: `/zipsa-workflow <request or workflow.md>`.
+- Codex: `$zipsa-workflow <request or workflow.md>`.
+
+The workflow checkpoint preserves approvals, artifact references and unfinished work.
+The offline HTML guide explains outcomes and blockers; it is presentation data, not execution
+state or approval. Test evidence is tied to the actual code, fixtures, configuration and environment.
+
+## Distribution layout
+
+- `plugins/zipsa-commands/skills/` contains Claude-led skills and their resources.
+- `plugins/zipsa-commands/.claude-plugin/plugin.json` identifies the Claude plugin.
+- `codex/skills/` contains Codex-led skills and their resources.
+- Each host's `zipsa-workflow/` includes shared references, the offline renderer and its tests.
+
+Keep each host's nine sibling skill directories together. Do not install both distributions
+into one host's skills directory: their lead/peer roles and tool calls differ.
+
+## Verify a checkout
+
+Use the Python version in `.tool-versions`, managed by asdf, and uv:
+
+```sh
+uv sync --locked --python "$(asdf which python3)"
+uv run python -m unittest discover -s tests -v
+uv run python -m unittest discover -s plugins/zipsa-commands/skills/zipsa-workflow/tests -v
+uv run python -m unittest discover -s codex/skills/zipsa-workflow/tests -v
+claude plugin validate --strict plugins/zipsa-commands
+claude plugin validate --strict .claude-plugin/marketplace.json
 ```
-/zipsa-validate .claude/plans/my-plan.md
-```
 
-Agent and Codex each independently review the plan, then findings are compared. Returns critical issues, simplification opportunities, and alternative approaches. Supports back-and-forth discussion.
+Behavioral checks for skill changes are described in each distribution's
+`zipsa-workflow/references/skill-validation.md`. File validation and renderer tests do not
+prove that an agent follows a workflow. Native Claude execution was unavailable during this
+update because the account returned `403 oauth_not_allowed_for_organization`; this is not a
+Claude behavioral pass. Independent Codex smoke checks exercised both instruction variants.
 
-### `/zipsa-tasks`
-
-Breaks a validated plan into concrete, ordered implementation tasks. Pass the path to your plan file.
-
-```
-/zipsa-tasks .claude/plans/my-plan.md
-```
-
-Agent and Codex collaborate to surface and resolve every ambiguity in the plan (only escalating unresolvable decisions to the user), then independently produce task breakdowns and merge them into a final ordered list. Each task includes what to build, acceptance criteria, and dependencies.
-
-### `/zipsa-build`
-
-Implements tasks from a task list one by one, with Codex reviewing the approach before each implementation. Pass the path to the tasks file (e.g. from `/zipsa-tasks`).
-
-```
-/zipsa-build .claude/plans/my-tasks.md
-```
-
-For each task, Agent and Codex independently design the implementation approach, compare, resolve any disagreements, then Agent implements and verifies the acceptance criteria before moving to the next task.
-
-### `/zipsa-review`
-
-Dual-perspective code review. Pass a file path, directory, or leave empty to review the current git diff.
-
-```
-/zipsa-review src/api/users.py
-/zipsa-review src/handlers/
-/zipsa-review                   # reviews current git diff
-```
-
-**Agent role:** Junior Backend Engineer — flags anything confusing, hard to follow, or that would slow down a new contributor.
-
-**Codex role:** Senior Engineer — reviews from an architectural, correctness, and production-readiness perspective.
-
-Evaluates code across five axes:
-
-| Axis | What it checks |
-|------|----------------|
-| SOLID Principles | SRP, OCP, LSP, ISP, DIP violations |
-| Clean Code | Naming, function length, duplication, magic values, dead code |
-| Lint / Style | Language idioms, error handling, type annotations, import hygiene |
-| Google Style Docstrings | Completeness and accuracy of Args, Returns, Raises sections |
-| Optimization & Correctness | Algorithmic complexity, allocations, IO batching, resource leaks, correctness bugs |
-
-When REST API code is detected (route decorators, handler signatures, OpenAPI annotations), three additional axes are automatically included:
-
-| Axis | What it checks |
-|------|----------------|
-| RESTful Compliance | HTTP method semantics, resource URL design, status codes, statelessness, pagination |
-| OpenAPI / Schema Compliance | Annotation completeness, parameter declarations, response schema accuracy, error schemas |
-| API Comments (Agent-Readability) | Whether another coding agent can call the API correctly based solely on comments and schema |
-
-Each finding is labeled 🔴 Critical / 🟠 Major / 🟡 Minor / 🟢 Suggestion with a prioritized action list at the end.
-
-## Troubleshooting
-
-| Problem | Solution |
-|---------|----------|
-| `npx: command not found` | Install [Node.js](https://nodejs.org/) which includes npm/npx |
-| MCP tool not found in session | Verify the server name is exactly `validate-plans-and-brainstorm-ideas` in `~/.claude.json` |
-| JSON parse errors in `~/.claude.json` | Validate your JSON (check commas and braces) |
-| Commands not appearing after install | Restart Claude Code and verify skill folders exist |
+The [release scope](docs/v0.0.5-roadmap.md) distinguishes this update from earlier proposals.
 
 ## License
 
-MIT
+MIT.
