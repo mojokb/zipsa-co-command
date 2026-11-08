@@ -1,13 +1,27 @@
 ---
 name: zipsa-validate
-description: Get a staff engineer review of your plan via Codex. Use when you want critical review feedback on a plan before finalizing it. Pass the path to the plan file as the argument. Results are documented only — does not proceed to implementation.
+description: Get a staff engineer review of your plan via Codex. Use when you want critical review feedback on a plan before finalizing it. Pass the path to the plan file as the argument.
 ---
 
 # Co-Validate: Get a Staff Engineer Review of Your Plan
 
-## Scope
+## Human-facing reports and HTML
 
-**This skill produces documentation only.** Do NOT write, edit, or modify any source code files. All output must be saved as a Markdown (`.md`) file.
+Follow the [shared reporting rules](../zipsa-workflow/references/reporting.md) for issue comments and HTML wording.
+
+Follow the [shared HTML guide contract](../zipsa-workflow/references/html-guide.md) on entry, after each meaningful internal step, and before yielding or completing, including standalone invocation. Update the feature's integrated HTML with plain explanations, observed results, uncertainty, original evidence and next actions; preserve other steps and return its path. This presentation does not replace canonical artifacts or grant execution/approval authority.
+
+## Independent simplicity check
+
+Include the [shared overengineering check](../zipsa-workflow/references/independent-review.md) in every independent peer prompt, including follow-ups, and apply its findings in the existing stage comparison.
+
+## Work type and prerequisites
+
+Read the [shared work policy](../zipsa-workflow/references/work-policy.md), including its question classification. Check applicable fix reproduction/cause evidence as a planning prerequisite; missing evidence is a material finding, not a valid product-fix plan. Keep this review within existing read-only authority.
+
+## Coverage against requirements
+
+Read the authoritative requirements and the plan revision under review; give both to the peer reviewer. Check every in-scope requirement against a planned change and an observable acceptance check. Report missing coverage and work outside the approved scope with requirement references. Preserve requirement IDs when revising the plan; changed scope, behavior, or acceptance criteria remain proposals until user-confirmed. Identify the revised plan and its approval status rather than treating reviewer agreement as approval.
 
 ## Arguments
 
@@ -35,6 +49,9 @@ You MUST spawn a **background subagent** (using the Task tool with `run_in_backg
 
 ```text
 First, explore the codebase in your working directory to understand the project structure, key files, and existing patterns. Then, as a staff engineer, review this plan. Analyze it for critical issues, big simplifications, or a completely different better approach — but do NOT share your review yet. If you need to ask clarifying questions about the plan or original request before reviewing, ask them now. Otherwise, when your review is complete and fully formed, respond with exactly: "My review is complete and I'm ready to present" and nothing else. Wait for my next message before sharing your review.
+
+Requirements and plan context:
+{include the authoritative requirements with stable IDs and source revision, the plan revision and approval status, and any relevant user-confirmed decisions; mark unavailable records explicitly}
 
 Original request from the user:
 <original_request>
@@ -68,10 +85,12 @@ Only after your own review is complete, confirm the background subagent has repo
 Once the review arrives:
 
 1. Read the Codex review output.
-2. Compare it against your own review.
+2. Compare it against your own review, including requirement coverage and work outside the confirmed scope.
 3. For each issue raised (by either review), either:
    - Accept it and update the plan accordingly
    - Override it with an explanation of why the current approach is better
+
+Return the revised plan with requirement coverage, source revisions, approval status, and a disposition of material findings.
 
 ## Continuing The Conversation
 
@@ -81,10 +100,6 @@ Use `mcp__validate-plans-and-brainstorm-ideas__codex-reply` with:
 - `prompt`: your response addressing points, explaining overrides, and asking for clarification when needed
 
 If you override points, explain why so they can push back if needed.
-
-## Output
-
-After completing the review, save the updated plan as a Markdown file. If the plan file was passed as an argument, overwrite it with the revised version. Otherwise save the result with a descriptive filename (e.g., `plan-[slug]-reviewed.md`). The file should reflect all accepted changes, with overridden suggestions documented inline with reasoning.
 
 ## How To Treat Responses
 

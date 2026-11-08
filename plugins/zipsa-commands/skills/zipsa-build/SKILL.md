@@ -5,6 +5,28 @@ description: Implement tasks incrementally with Codex as an approach reviewer. F
 
 # Zipsa-Build: Implement Tasks with Codex Approach Review
 
+## Human-facing reports and HTML
+
+Follow the [shared reporting rules](../zipsa-workflow/references/reporting.md) for issue comments and HTML wording.
+
+Follow the [shared HTML guide contract](../zipsa-workflow/references/html-guide.md) on entry, after each meaningful internal step, and before yielding or completing, including standalone invocation. Update the feature's integrated HTML with plain explanations, observed results, uncertainty, original evidence and next actions; preserve other steps and return its path. This presentation does not replace canonical artifacts or grant execution/approval authority.
+
+## Independent simplicity check
+
+Include the [shared overengineering check](../zipsa-workflow/references/independent-review.md) in every independent peer prompt, including follow-ups, and apply its findings in the existing stage comparison.
+
+## Work type and diagnosis
+
+Read the [shared work policy](../zipsa-workflow/references/work-policy.md), including standalone use. Identify fix/feature work against its contract; require fix reproduction and cause evidence before product edits and apply the repeated-premise check to failed remedies. Reuse current evidence and investigate missing facts only within existing authority. A missing diagnostic prerequisite blocks the affected implementation, not unrelated authorized tasks.
+
+## Verification evidence and plan changes
+
+Read the linked requirements and approved plan as well as the task list; include their references in the approach review. If the project requires plan approval and the relevant revision is pending or its approval cannot be established, obtain confirmation before implementation. For a standalone task without a separate plan, use the confirmed task and acceptance criteria as the baseline; do not invent a plan artifact. Preserve requirement IDs in task results. For each acceptance criterion record the check or manual procedure, observed result, evidence location, and tested commit or identifiable working-tree snapshot when uncommitted changes exist. Mark checks not run or inconclusive as unverified with the reason; do not mark a task fully verified while a required criterion remains unverified. Write or update meaningful unit tests with implementation as required by the repository. Preserve the planned scenarios and evidence for the subsequent zipsa-test stage; task-level checks do not replace verification of the complete change. Checks that require remaining planned implementation may stay explicitly pending for zipsa-test; do not defer runnable failing task-level checks or dependency checks needed by the next task.
+
+Before implementing a substantive design/contract departure from the validated plan, stop the affected task and return the proposed revision and reason. Invalidate the affected validation and obtain plan/validate reassessment plus required confirmation before resuming, including standalone invocation. For a standalone task without a plan, stop for confirmation if the proposed change departs from its confirmed scope/contract; do not invent a plan merely for this gate. Ordinary implementation details within the validated design need no new planning cycle. Update the existing plan for authorized departures and preserve the approved baseline reference; a retrospective plan edit is not approval.
+
+Use the existing task records for execution evidence and stage progress. For authorized issue-comment updates, follow the shared reporting rules: preserve only new facts needed for issue resolution or later debugging; stage completion alone does not warrant a comment. Keep requirements and completion criteria in the issue body. Do not create a separate stage report or post externally without authorization.
+
 ## Arguments
 
 `$ARGUMENTS` should be the path to the tasks file (e.g. from `zipsa-tasks` output), or a single task description. If a tasks file is provided, tasks are processed one by one in dependency order.
@@ -13,7 +35,7 @@ description: Implement tasks incrementally with Codex as an approach reviewer. F
 
 ## Per-Task Loop
 
-Repeat Steps 1–4 for each task. Complete each task fully before moving to the next.
+Repeat Steps 1–4 for each task. Complete implementation and applicable task-level checks before moving to the next; carry explicitly pending whole-change checks to zipsa-test without marking them verified.
 
 ---
 
@@ -54,6 +76,9 @@ You are acting as a **Senior Engineer reviewing an implementation approach** —
 
 Do NOT write code. Describe the approach only. Be concise and specific.
 
+Requirements and plan context:
+{include the authoritative requirements with stable IDs and source revision, the plan revision and approval status, and any relevant user-confirmed decisions; mark unavailable records explicitly}
+
 Task:
 <task>
 {paste the full task description and acceptance criteria}
@@ -86,7 +111,7 @@ Read the Codex response. Compare it against your own approach:
 - **Codex suggests simpler alternative** → adopt if it satisfies the acceptance criteria with less code or fewer dependencies
 - **Codex identifies a risk or conflict you missed** → incorporate into your approach
 - **Codex proposes more complex approach** → challenge it: "What concrete requirement does this complexity address?" Default to the simpler approach unless Codex's reason is compelling.
-- **Unresolvable disagreement or missing decision** → escalate to the user before proceeding
+- **Technical disagreement** → first seek distinguishing evidence within existing authority and apply the shared question policy; escalate only a remaining user-owned decision or unavailable information/access.
 
 State the confirmed approach in one short paragraph before implementing.
 
@@ -97,7 +122,7 @@ State the confirmed approach in one short paragraph before implementing.
 **4a. Implement.**
 
 Write the code according to the confirmed approach. Follow project conventions:
-- Max function length: 40 lines (Python), 60 lines (Go)
+- Max function length: 40 lines (Python, excluding docstring lines), 60 lines (Go)
 - Max file length: 300 lines — split if exceeded
 - No magic numbers, no commented-out code, no TODO left behind
 - No features beyond what the task requires
@@ -125,10 +150,12 @@ If verification fails:
 ```
 ## Build Complete
 
-### Tasks Implemented
-1. [Task title] — ✅ verified
-2. [Task title] — ✅ verified
-...
+### Task Results
+- [Task title / requirement IDs]: [verified, failed, or unverified]
+  - [acceptance criterion]: [check or procedure; observed result; evidence location; tested commit or working-tree snapshot]
+
+### Plan Conformance
+- [approved baseline; departures and reasons; confirmation references or pending decisions]
 
 ### Approach Decisions
 - [Task title]: chose [approach] over [Codex alternative] because [reason]

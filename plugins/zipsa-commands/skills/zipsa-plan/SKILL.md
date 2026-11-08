@@ -5,16 +5,30 @@ description: Generate a parallel plan via Codex. Use when you want an additional
 
 # Co-Plan: Generate a Parallel Plan via Codex
 
-## Scope
+## Human-facing reports and HTML
 
-**This skill produces documentation only.** Do NOT write, edit, or modify any source code files. All output must be saved as a Markdown (`.md`) file.
+Follow the [shared reporting rules](../zipsa-workflow/references/reporting.md) for issue comments and HTML wording.
+
+Follow the [shared HTML guide contract](../zipsa-workflow/references/html-guide.md) on entry, after each meaningful internal step, and before yielding or completing, including standalone invocation. Update the feature's integrated HTML with plain explanations, observed results, uncertainty, original evidence and next actions; preserve other steps and return its path. This presentation does not replace canonical artifacts or grant execution/approval authority.
+
+## Independent simplicity check
+
+Include the [shared overengineering check](../zipsa-workflow/references/independent-review.md) in every independent peer prompt, including follow-ups, and apply its findings in the existing stage comparison.
+
+## Work type and prerequisites
+
+Read the [shared work policy](../zipsa-workflow/references/work-policy.md), including its question classification. Before product-fix planning, require current reproduction/cause evidence; return missing diagnosis to grill. Feature planning uses confirmed scope and observable acceptance criteria. This grants no diagnostic execution or product-edit authority.
+
+## Requirements and plan references
+
+Read the authoritative requirements and identify their source and revision in the final plan. Preserve existing requirement IDs; if absent, use stable labels in the plan and state their source without inventing approval. Map each in-scope requirement to the planned change and its acceptance check. Identify the approved plan revision, or explicitly mark approval as pending. Include these references and mapping in the peer review input.
 
 ## Step 1: Spawn a Background Subagent for Codex
 
 You MUST immediately spawn a **background subagent** (using the Task tool with `run_in_background: true`) to handle all communication with Codex. The subagent should:
 
 1. Call `mcp__validate-plans-and-brainstorm-ideas__codex` with:
-   - `prompt`: `First, explore the codebase in your working directory to understand the project structure, key files, and existing patterns. Then create a detailed implementation plan for the following task. Think deeply about architecture, steps, edge cases, and trade-offs — but do NOT share the plan yet. If you need to ask clarifying questions about the task before planning, ask them now. Otherwise, when your plan is fully formed and ready, respond with exactly: "My plan is ready to present" and nothing else. Wait for my next message before sharing the plan.\n\nTask: $ARGUMENTS`
+   - `prompt`: `First, explore the codebase in your working directory to understand the project structure, key files, and existing patterns. Then create a detailed implementation plan for the following task. Think deeply about architecture, steps, edge cases, and trade-offs — but do NOT share the plan yet. If you need to ask clarifying questions about the task before planning, ask them now. Otherwise, when your plan is fully formed and ready, respond with exactly: "My plan is ready to present" and nothing else. Wait for my next message before sharing the plan.\n\nTask: $ARGUMENTS\n\nRequirements context: {include the authoritative requirements, their stable IDs and source revision, and relevant confirmed decisions}. Map each in-scope requirement to planned changes and acceptance checks.`
    - `sandbox`: `read-only`
    - `approval-policy`: `never`
    - `cwd`: (use the current working directory)
@@ -51,10 +65,6 @@ If you want to discuss the plan further, use `mcp__validate-plans-and-brainstorm
 
 - `threadId`: the thread ID from the previous response
 - `prompt`: your follow-up question or counterpoint
-
-## Output
-
-Save the final plan as a Markdown file in the current working directory. Use a descriptive filename based on the task (e.g., `plan-[task-slug].md`). The file should include the integrated plan with key decisions, architecture choices, and trade-offs documented.
 
 ## How To Treat Responses
 
