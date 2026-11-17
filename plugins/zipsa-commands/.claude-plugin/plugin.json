@@ -1,7 +1,7 @@
 {
   "name": "zipsa-commands",
-  "version": "0.0.5",
-  "description": "Nine Claude-led skills for fix and feature work with independent Codex review.",
+  "version": "0.0.6",
+  "description": "Claude-led development skills with independent Codex review, plus a read-only session retrospective.",
   "author": {
     "name": "mojokb"
   }

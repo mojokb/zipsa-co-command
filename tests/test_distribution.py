@@ -26,6 +26,7 @@ SKILL_NAMES = {
     "zipsa-build",
     "zipsa-test",
     "zipsa-review",
+    "zipsa-retro",
 }
 EVIDENCE_FILENAME = "source note.md"
 BLOCKED_GUIDE = {
@@ -51,6 +52,28 @@ BLOCKED_GUIDE = {
 
 class DistributionTests(unittest.TestCase):
     """Check the files that installed workflows and plugin discovery actually consume."""
+
+    def test_retrospective_is_explicit_only_in_both_distributions(self) -> None:
+        """Preserve invocation policy when the complete skill directory is installed."""
+        with tempfile.TemporaryDirectory() as directory:
+            installed = Path(directory)
+            for host, source in HOST_SOURCES.items():
+                with self.subTest(host=host):
+                    target = installed / host
+                    subprocess.run(
+                        ["cp", "-R", str(source / "zipsa-retro"), str(target)],
+                        check=True,
+                    )
+                    if host == "claude":
+                        header = (target / "SKILL.md").read_text().split("---", 2)[1]
+                        self.assertRegex(
+                            header, r"(?m)^disable-model-invocation:\s*true\s*$"
+                        )
+                    else:
+                        policy = (target / "agents/openai.yaml").read_text()
+                        self.assertRegex(
+                            policy, r"(?m)^\s+allow_implicit_invocation:\s*false\s*$"
+                        )
 
     def test_marketplace_resolves_versioned_plugin(self) -> None:
         marketplace = json.loads(

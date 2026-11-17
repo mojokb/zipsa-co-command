@@ -1,6 +1,6 @@
 # zipsa-co-command
 
-Nine skills for fix and feature work, with independent planning and review from a second agent.
+Ten skills for fix and feature work and session retrospectives, with independent planning and review from a second agent.
 Claude Code leads the Claude distribution and consults Codex through MCP. Codex leads the
 Codex distribution and consults a read-only Claude CLI session. The lead agent implements;
 its peer reviews the approach. Peer agreement does not grant approval or prove correctness.
@@ -18,6 +18,7 @@ its peer reviews the approach. Peer agreement does not grant approval or prove c
 | `zipsa-build` | Implement authorized tasks and verify runnable task-level criteria. |
 | `zipsa-test` | Execute required checks on the actual change and preserve failures and limitations. |
 | `zipsa-review` | Review requirements coverage, code quality and current verification evidence. |
+| `zipsa-retro` | On explicit request, analyze session timing and workflow rework, then propose improvements without applying them. |
 
 ## Fix and feature routing
 
@@ -38,6 +39,8 @@ flowchart TD
     H --> I[Test]
     I --> J[Review]
 ```
+
+`zipsa-retro` is a standalone, explicitly invoked retrospective, not another workflow stage. It reads existing session evidence, keeps overlapping time distinct and traces omissions, corrections and repeated updates. It does not add live instrumentation, dispatch peers or apply its proposals.
 
 The controller runs at most one stage per invocation. A status request does not start work.
 Repository approval rules remain in force. A substantive design departure returns to
@@ -65,7 +68,7 @@ state or approval. Test evidence is tied to the actual code, fixtures, configura
 - `codex/skills/` contains Codex-led skills and their resources.
 - Each host's `zipsa-workflow/` includes shared references, the offline renderer and its tests.
 
-Keep each host's nine sibling skill directories together. Do not install both distributions
+Keep each host's ten sibling skill directories together. Do not install both distributions
 into one host's skills directory: their lead/peer roles and tool calls differ.
 
 ## Verify a checkout
@@ -87,7 +90,7 @@ prove that an agent follows a workflow. Native Claude execution was unavailable 
 update because the account returned `403 oauth_not_allowed_for_organization`; this is not a
 Claude behavioral pass. Independent Codex smoke checks exercised both instruction variants.
 
-The [release scope](docs/v0.0.5-roadmap.md) distinguishes this update from earlier proposals.
+The [previous release scope](docs/v0.0.5-roadmap.md) documents version 0.0.5. Version 0.0.6 adds the standalone retrospective and recovery/deployment-coherence guidance without changing host roles or the stage sequence.
 
 ## License
 

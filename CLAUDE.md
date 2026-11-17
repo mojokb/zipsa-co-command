@@ -2,7 +2,7 @@
 
 ## Purpose and layout
 
-This repository distributes nine zipsa skills for both Claude Code and Codex.
+This repository distributes ten zipsa skills for both Claude Code and Codex, including a standalone, explicitly invoked read-only retrospective.
 
 - Claude skills: `plugins/zipsa-commands/skills/`.
 - Claude manifest: `plugins/zipsa-commands/.claude-plugin/plugin.json`.

@@ -8,7 +8,7 @@
 | Codex | `codex/skills/` | 읽기 전용 Claude CLI |
 
 두 배포본은 역할과 도구 호출이 다릅니다. 같은 실행 주체의 스킬 디렉터리에 두 배포본을 섞지 않습니다.
-공통 참조 문서와 렌더러를 포함해야 하므로 `SKILL.md`만 복사하지 않고 9개 디렉터리를 통째로 설치합니다.
+공통 참조 문서와 렌더러를 포함해야 하므로 `SKILL.md`만 복사하지 않고 10개 디렉터리를 통째로 설치합니다.
 
 ## 사전 요구사항
 
@@ -68,7 +68,7 @@ mkdir -p "$HOME/.claude/skills"
 cp -R plugins/zipsa-commands/skills/zipsa-* "$HOME/.claude/skills/"
 ```
 
-직접 설치한 스킬은 `/zipsa-workflow`처럼 호출합니다.
+직접 설치한 스킬은 `/zipsa-workflow`처럼 호출합니다. 읽기 전용 회고는 `/zipsa-retro`로 명시적으로 호출하며 자동 단계에 포함되지 않습니다.
 Marketplace와 직접 설치를 동시에 사용하면 이름이 겹칠 수 있으므로 활성 스킬의 실제 경로를 확인합니다.
 
 ### Codex
@@ -78,7 +78,7 @@ mkdir -p "$HOME/.agents/skills"
 cp -R codex/skills/zipsa-* "$HOME/.agents/skills/"
 ```
 
-`$zipsa-workflow`로 호출합니다. 이 경로를 별도 계정 디렉터리로 복제하는 실행 환경에서는
+`$zipsa-workflow`로 호출합니다. 세션 회고는 `$zipsa-retro`로 명시적으로 호출합니다. 이 경로를 별도 계정 디렉터리로 복제하는 실행 환경에서는
 그 환경의 동기화 절차로 같은 버전을 반영합니다.
 
 복사는 기존 zipsa 파일을 갱신합니다. 개인적으로 수정한 스킬은 먼저 보존합니다.
@@ -86,7 +86,7 @@ cp -R codex/skills/zipsa-* "$HOME/.agents/skills/"
 
 ## 설치 확인
 
-1. 9개 스킬 중 `zipsa-workflow`가 선택 목록에 있는지 확인합니다.
+1. 10개 스킬 중 `zipsa-workflow`가 선택 목록에 있는지 확인합니다.
 2. 설치된 `zipsa-workflow/references/work-policy.md`와 `scripts/render_html.py`가 존재하는지 확인합니다.
 3. 스킬이 읽는 경로가 선택한 배포본인지 확인합니다. 프로젝트에 같은 이름의 스킬이 있으면 함께 확인합니다.
 4. 상태만 알려달라는 요청으로 시작하여 작업 실행이나 소스 변경이 발생하지 않는지 확인합니다.
@@ -113,7 +113,7 @@ Marketplace 설치는 marketplace 목록을 갱신한 뒤 플러그인을 업데
 | 증상 | 확인할 내용 |
 |---|---|
 | 스킬이 안 보임 | 설치한 실행 주체·디렉터리·plugin 활성 상태와 이름 충돌 |
-| 공통 문서를 찾지 못함 | 9개 디렉터리를 참조 문서·스크립트와 함께 복사했는지 |
+| 공통 문서를 찾지 못함 | 10개 디렉터리를 참조 문서·스크립트와 함께 복사했는지 |
 | 독립 검토 실패 | 상대 도구 이름·설치·인증, 해당 단계의 대체 규칙 |
 | HTML 생성 실패 | asdf의 Python 3.11 이상과 uv, 출력 경로 권한 |
 | 이전 동작이 계속됨 | 세션이 최신 지침을 다시 읽었는지와 실행 환경의 사본 동기화 |
